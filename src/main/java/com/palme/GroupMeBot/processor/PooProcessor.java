@@ -35,7 +35,7 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
     }
 
     @Override
-    public Boolean consideredExclusive() {
+    public boolean consideredExclusive() {
         return true;
     }
 
@@ -57,7 +57,7 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
     }
 
     @Override
-    public Boolean validate(final PooMessage message) {
+    public boolean validate(final PooMessage message) {
         return true;
     }
 
@@ -85,7 +85,7 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
     }
 
     @Override
-    public Boolean isConsumable(final IncomingGroupMeMessage message) {
+    public boolean isConsumable(final IncomingGroupMeMessage message) {
         String text = message.getText();
         if(text == null || text.isEmpty()) {
             return false;

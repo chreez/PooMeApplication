@@ -31,10 +31,10 @@ public abstract class AbstractProcessor <T extends IncomingGroupMeMessage> {
         return ImmutableMap.of();
     }
 
-    public abstract Boolean isConsumable(final IncomingGroupMeMessage message);
-    public abstract Boolean consideredExclusive();
+    public abstract boolean isConsumable(final IncomingGroupMeMessage message);
+    public abstract boolean consideredExclusive();
 
     abstract T parse(IncomingGroupMeMessage message);
-    abstract Boolean validate(T message);
+    abstract boolean validate(T message);
     abstract Map<String, OutgoingGroupMeMessage> consume(T message);
 }

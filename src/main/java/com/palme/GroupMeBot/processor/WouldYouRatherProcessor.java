@@ -31,12 +31,12 @@ public class WouldYouRatherProcessor extends AbstractProcessor<IncomingGroupMeMe
     }
 
     @Override
-    public Boolean isConsumable(final IncomingGroupMeMessage message) {
+    public boolean isConsumable(final IncomingGroupMeMessage message) {
         return true;
     }
 
     @Override
-    public Boolean consideredExclusive() {
+    public boolean consideredExclusive() {
         return false;
     }
 
@@ -46,7 +46,7 @@ public class WouldYouRatherProcessor extends AbstractProcessor<IncomingGroupMeMe
     }
 
     @Override
-    Boolean validate(final IncomingGroupMeMessage message) {
+    boolean validate(final IncomingGroupMeMessage message) {
         return true;
     }
 
