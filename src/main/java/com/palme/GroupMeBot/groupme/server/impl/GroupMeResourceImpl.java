@@ -55,7 +55,8 @@ public class GroupMeResourceImpl implements GroupMeResource {
             System.out.println(" init processors");
             Class.forName("org.sqlite.JDBC");
             final Connection connection = DriverManager.getConnection("jdbc:sqlite:GroupMeBotDB_3312.db");
-            processors = ImmutableList.of(new WouldYouRatherProcessor(client), new PooProcessor(client, connection), new WillProcessor());
+//            new WouldYouRatherProcessor(client),
+            processors = ImmutableList.of(new PooProcessor(client, connection), new WillProcessor());
         } else {
             System.out.println("processors already init");
         }
@@ -99,7 +100,7 @@ public class GroupMeResourceImpl implements GroupMeResource {
 
         for(final Entry<String, OutgoingGroupMeMessage> entry : outGoingMessages.build().entries()) {
             if(OutgoingGroupMeMessage.GENERIC_GROUP_ID.equals(entry.getKey())) {
-//                client.sendMessage(entry.getValue().getText());
+                client.sendMessage(entry.getValue().getText());
             } else {
                 //TODO: Direct message support not avail
             }
