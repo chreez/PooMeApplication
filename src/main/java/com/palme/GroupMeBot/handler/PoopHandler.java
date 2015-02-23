@@ -14,7 +14,7 @@ import com.palme.GroupMeBot.dao.model.UserInfo;
 import com.palme.GroupMeBot.groupme.client.UserDetails;
 
 public class PoopHandler {
-    private static final String STATUS_FORMAT = "[%s] Poop metrics: %d total poops, with a frequency of pooping once every %d day(s).";
+    private static final String STATUS_FORMAT = "[%s] has pooped %d times. I wish I could shit that much!";
     private final PoopDao poopDao;
     private final AchievementsDao achievementsDao;
     private final UsersDao usersDao;
@@ -56,7 +56,7 @@ public class PoopHandler {
             usersDao.updateUser(userInfo);
             final PoopMetrics metrics = poopDao.getPoopMetrics(userInfo.getUserId());
             System.out.println("metrics fetched" + metrics);
-            final String message = String.format(STATUS_FORMAT, userInfo.getLogin(), metrics.getPooCount(), 1);
+            final String message = String.format(STATUS_FORMAT, userInfo.getLogin(), metrics.getPooCount());
             System.out.println(message  + "message?!?!?!" );
             return Optional.of(message );
     }
