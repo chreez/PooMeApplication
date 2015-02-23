@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.collect.ImmutableMap;
 import com.palme.GroupMeBot.apps.WouldYouRatherApp;
 import com.palme.GroupMeBot.groupme.client.GroupMeClient;
@@ -11,7 +14,7 @@ import com.palme.GroupMeBot.groupme.server.model.IncomingGroupMeMessage;
 import com.palme.GroupMeBot.groupme.server.model.OutgoingGroupMeMessage;
 
 public class WouldYouRatherProcessor extends AbstractProcessor<IncomingGroupMeMessage> {
-
+    private static final Logger logger = LoggerFactory.getLogger(WouldYouRatherProcessor.class);
     private WouldYouRatherApp app;
     private Thread workerThread;
 
@@ -49,6 +52,10 @@ public class WouldYouRatherProcessor extends AbstractProcessor<IncomingGroupMeMe
 
     @Override
     Map<String, OutgoingGroupMeMessage> consume(final IncomingGroupMeMessage message) {
+        logger.info("Refreshing heartbeat of message {}");
+        if(this.app == null) {
+            logger.warn("APP IS NULL");
+        }
         this.app.refreshHeartbeat();
         return ImmutableMap.of();
     }
