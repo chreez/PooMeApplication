@@ -60,7 +60,7 @@ public class WillProcessor extends AbstractProcessor<IncomingGroupMeMessage> {
 
     private boolean shouldInsultUser() {
         final Random rand = new Random();
-        int randomId = rand.nextInt(14);
+        int randomId = rand.nextInt(10);
         return randomId < 1;
     }
 

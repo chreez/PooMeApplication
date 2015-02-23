@@ -14,7 +14,7 @@ import com.palme.GroupMeBot.dao.model.UserInfo;
 import com.palme.GroupMeBot.groupme.client.UserDetails;
 
 public class PoopHandler {
-    private static final String STATUS_FORMAT = "%s poop metrics: %d total poops, with a frequency of pooping once every %d day(s).";
+    private static final String STATUS_FORMAT = "[%s] Poop metrics: %d total poops, with a frequency of pooping once every %d day(s).";
     private final PoopDao poopDao;
     private final AchievementsDao achievementsDao;
     private final UsersDao usersDao;
