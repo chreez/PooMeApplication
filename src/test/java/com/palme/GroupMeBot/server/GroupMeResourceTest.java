@@ -67,7 +67,7 @@ public class GroupMeResourceTest {
     }
 
 
-    @Test
+//    @Test
     public void postIt() throws IOException, URISyntaxException {
         Client c = ClientBuilder.newClient();
         target = c.target(PooMeApplication.BASE_URI);
@@ -78,7 +78,7 @@ public class GroupMeResourceTest {
         assertEquals(204, response.getStatus());
     }
 
-    @Test
+//    @Test
     public void postItSingleton() throws IOException, URISyntaxException {
         Client c = ClientBuilder.newClient();
         target = c.target(PooMeApplication.BASE_URI);

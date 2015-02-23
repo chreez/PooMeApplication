@@ -136,6 +136,8 @@
                <configuration>
                   <environmentVariables>
                      <DOMAIN>TEST</DOMAIN>
+<!--                      <DATABASE_URL>mysql://b67e95680c34e6:9efdd5ef@us-cdbr-iron-east-01.cleardb.net/heroku_68b92a05e1d0022?reconnect=true</DATABASE_URL> -->
+                     <DATABASE_URL>postgres://hhiusvuybtwqqh:P8GZfBluzV-Zg5I0ukkbPMQdN5@ec2-50-19-236-178.compute-1.amazonaws.com:5432/d34jcr585l52bs</DATABASE_URL>
                   </environmentVariables>
                </configuration>
             </plugin>

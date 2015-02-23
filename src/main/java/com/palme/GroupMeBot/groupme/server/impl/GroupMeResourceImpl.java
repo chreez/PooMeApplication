@@ -71,11 +71,25 @@ public class GroupMeResourceImpl implements GroupMeResource {
 //        if(Domain.TEST.equals(domain)) {
 ////            return DriverManager.getConnection("jdbc:sqlite:GroupMeBotDB.db");
 //        }
-        final URI dbUri = new URI(System.getenv("DATABASE_URL"));
+//        final URI dbUri = new URI(System.getenv("DATABASE_URL"));
+//
+//        final String username = dbUri.getUserInfo().split(":")[0];
+//        System.out.println(username);
+//        final String password = dbUri.getUserInfo().split(":")[1];
+//        System.out.println(password);
+//        System.out.println(dbUri.getHost() );
+//        System.out.println(dbUri.getPath() );
+//        final String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
+//
+//        return DriverManager.getConnection("jdbc:" + System.getenv("DATABASE_URL"), username, password);
 
-        final String username = dbUri.getUserInfo().split(":")[0];
-        final String password = dbUri.getUserInfo().split(":")[1];
-        final String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
+        URI dbUri = new URI(System.getenv("DATABASE_URL"));
+
+        String username = dbUri.getUserInfo().split(":")[0];
+        String password = dbUri.getUserInfo().split(":")[1];
+        int port = dbUri.getPort();
+
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + port + dbUri.getPath();
 
         return DriverManager.getConnection(dbUrl, username, password);
     }
