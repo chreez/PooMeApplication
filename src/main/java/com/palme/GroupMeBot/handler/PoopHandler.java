@@ -41,7 +41,7 @@ public class PoopHandler {
         final int lastPoopRowId = poopDao.createPoop(newPoop, userInfo);
         userInfo.setLastPooRowIndex(lastPoopRowId);
         usersDao.updateUser(userInfo);
-        return Optional.of(achievementsDao.getAchievementForPoopMetrics(poopDao.getPoopMetrics(userInfo.getUserId())));
+        return Optional.of(achievementsDao.getAchievementForPoopMetrics(poopDao.getPoopMetrics(userInfo.getUserId()))).or(Optional.absent());
     }
 
     public Optional<String> getUserStatus(final UserDetails userDetails) throws SQLException {

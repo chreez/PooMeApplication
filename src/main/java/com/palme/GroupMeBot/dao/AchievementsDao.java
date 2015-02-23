@@ -16,7 +16,7 @@ public class AchievementsDao {
         }
 
         if(poopMetrics.getPooCount() % 10  == 0) {
-            return getCongratsTerm() + String.format("You pooped %d times so far!", poopMetrics.getPooCount());
+            return getCongratsTerm() + String.format("You've pooped %d times so far!", poopMetrics.getPooCount());
         }
 
         return null;
