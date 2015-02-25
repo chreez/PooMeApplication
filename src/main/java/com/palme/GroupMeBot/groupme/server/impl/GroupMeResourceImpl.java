@@ -56,9 +56,10 @@ public class GroupMeResourceImpl implements GroupMeResource {
         if(processors == null) {
             System.out.println(" init processors");
             Class.forName("org.sqlite.JDBC");
-            final Connection connection =   getConnection(domain);
+//            final Connection connection =   getConnection(domain);
 //            new WouldYouRatherProcessor(client),
-            processors = ImmutableList.of(new PooProcessor(client, connection), new WillProcessor());
+//            new PooProcessor(client, connection),
+            processors = ImmutableList.of(new WillProcessor());
         } else {
             System.out.println("processors already init");
         }
@@ -89,7 +90,7 @@ public class GroupMeResourceImpl implements GroupMeResource {
         String password = dbUri.getUserInfo().split(":")[1];
         int port = dbUri.getPort();
 
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + port + dbUri.getPath();
+        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + dbUri.getPath();
 
         return DriverManager.getConnection(dbUrl, username, password);
     }
