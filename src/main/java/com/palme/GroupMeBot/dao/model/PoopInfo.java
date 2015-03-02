@@ -2,6 +2,8 @@ package com.palme.GroupMeBot.dao.model;
 
 import org.joda.time.Instant;
 
+import com.google.common.base.Objects;
+
 public class PoopInfo implements Comparable<PoopInfo> {
     private Integer userId;
     private Integer consistency;
@@ -43,6 +45,11 @@ public class PoopInfo implements Comparable<PoopInfo> {
     @Override
     public int compareTo(final PoopInfo other) {
         return this.creationDate.compareTo(other.getCreationDate());
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("uid", userId).add("consist", consistency).add("creationdate", creationDate).toString();
     }
 
 }

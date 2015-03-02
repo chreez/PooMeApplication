@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
 import com.google.common.base.Preconditions;
 
 public abstract class SqliteDao {
@@ -45,6 +47,7 @@ public abstract class SqliteDao {
 //                connection.close(); BAD
             } catch(SQLException sqlException) {
                 //No action table already created
+//                throw new RuntimeException(sqlException);
             }
         }
     };

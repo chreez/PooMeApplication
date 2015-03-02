@@ -38,9 +38,11 @@ public class PoopHandler {
             usersDao.createUser(Integer.valueOf(userDetails.getId()), userDetails.getName());
             userInfo = Iterables.getOnlyElement(usersDao.getUserInfos(ImmutableList.of(Integer.valueOf(userDetails.getId()))).values()).get();
         }
+
         final int lastPoopRowId = poopDao.createPoop(newPoop, userInfo);
         userInfo.setLastPooRowIndex(lastPoopRowId);
         usersDao.updateUser(userInfo);
+
         final String result = achievementsDao.getAchievementForPoopMetrics(poopDao.getPoopMetrics(userInfo.getUserId()));
         if(result == null) {
             return Optional.absent();

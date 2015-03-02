@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.joda.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
@@ -26,16 +28,22 @@ import com.palme.GroupMeBot.dao.model.UserInfo;
  *
  */
 public class PoopDao extends SqliteDao{
-    static private final String CREATE_POOPS_SQL = "create table IF NOT EXISTS poops (user_id integer, consistency integer, creation_date timestamp);";
+    private static final Logger logger = LoggerFactory.getLogger(PoopDao.class);
+    static private final String CREATE_SEQUENCE = "CREATE SEQUENCE POOP_ID_SEQ START 1";
+    static private final String CREATE_POOPS_SQL = "create table IF NOT EXISTS poops (poop_id integer PRIMARY KEY,  user_id integer, consistency integer, creation_date timestamp);";
     static private final String CREATE_POOP_METRICS_SQL = "create table IF NOT EXISTS poop_metrics ( user_id integer primary key, poo_count integer, consistency_avg real, frequency_avg real);";
 
     static private final String INSERT_POOP_METRICS_SQL = "INSERT INTO POOP_METRICS (user_id, poo_count, consistency_avg, frequency_avg) VALUES (?,?,?,?);";
     static private final String GET_POOP_METRICS_SQL = "SELECT user_id, poo_count, consistency_avg, frequency_avg FROM POOP_METRICS WHERE USER_ID = %s;";
     static private final String UPDATE_POOP_METRICS = "UPDATE POOP_METRICS SET poo_count = ? , consistency_avg = ? , frequency_avg = ? WHERE USER_ID = %s;";
 
-    static private final String INSERT_POOP_SQL = "INSERT INTO poops (user_id, consistency, creation_date) VALUES (?, ?, ?);";
-    static private final String GET_POOP_SQL = "SELECT consistency, creation_date FROM POOPS WHERE rowid = %s;";
+    static private final String INSERT_POOP_SQL = "INSERT INTO poops (user_id, consistency, creation_date, poop_id) VALUES (?, ?, ?, ? );";
+    static private final String GET_POOP_SQL = "SELECT consistency, creation_date FROM POOPS WHERE poop_id = %s;";
     static private final String GET_POOPS_SQL = "SELECT * FROM POOPS WHERE user_id = %s;";
+
+    static private final String NEXT_VAL_POOP_ID_SEQ = "SELECT nextval('POOP_ID_SEQ');";
+
+
 
     public static void main(final String[] args) throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
@@ -49,35 +57,52 @@ public class PoopDao extends SqliteDao{
     }
 
     public Integer createPoop(final PoopInfo newPoop, final UserInfo userInfo) throws SQLException {
+        logger.debug("Creating poop for user{}! {} ", userInfo, newPoop);
+        System.out.println("Creating poop" + userInfo + newPoop);
         final PoopInfo oldPoopInfo;
         if(userInfo.getLastPooRowIndex() != null) {
-            final ResultSet result = getJdbcConnection().createStatement().executeQuery(String.format(GET_POOP_SQL, userInfo.getLastPooRowIndex()));
+            System.out.println(String.format(GET_POOP_SQL, userInfo.getLastPooRowIndex()));
+            ResultSet result;
+            try{
+                 result = getJdbcConnection().createStatement().executeQuery(String.format(GET_POOP_SQL, userInfo.getLastPooRowIndex()));
+            } catch(Exception e ) {
+                e.printStackTrace();
+                result = null;
+            }
             if(result.next()) {
+                System.out.println("Got some old poop info lol");
                 oldPoopInfo = new PoopInfo();
                 oldPoopInfo.setConsistency(result.getInt(1));
-                oldPoopInfo.setCreationDate(new Instant(result.getDate(1)));
+                oldPoopInfo.setCreationDate(new Instant(result.getDate(2)));
                 oldPoopInfo.setUserId(userInfo.getUserId());
             } else {
+                System.out.println("Got no old poop info");
                 oldPoopInfo = null;
                 initPoopMetricsTable(userInfo.getUserId());
             }
         } else {
+            System.out.println("No other poops");
             oldPoopInfo = null;
             initPoopMetricsTable(userInfo.getUserId());
         }
+//        POOP_ID_SEQ
+
+        final int poop_id = getNextSequenceVal();
 
         final PoopMetrics metrics = getPoopMetrics(userInfo.getUserId());
-
+        System.out.println("Inserting poop");
         final PreparedStatement insertPoop = getJdbcConnection().prepareStatement(INSERT_POOP_SQL);
         insertPoop.setInt(1, userInfo.getUserId());
         insertPoop.setInt(2, newPoop.getConsistency());
         insertPoop.setTimestamp(3, new Timestamp(newPoop.getCreationDate().getMillis()));
-        final Integer rowId = insertPoop.executeUpdate();
+        insertPoop.setInt(4, poop_id);
+        insertPoop.executeUpdate();
 
         final PoopMetrics newMetrics = metrics.updateMetrics(oldPoopInfo, newPoop);
         updatePoopMetrics(newMetrics);
+        System.out.println("Update metrics" + newMetrics);
 
-        return rowId;
+        return poop_id;
     }
     public SortedSet<PoopInfo> getAllPoopsForUser(final Integer userId) throws SQLException {
         final Statement getPoops = getJdbcConnection().createStatement();
@@ -85,15 +110,13 @@ public class PoopDao extends SqliteDao{
 
         final ImmutableSortedSet.Builder<PoopInfo> poops = ImmutableSortedSet.naturalOrder();
         while(resultSet.next()) {
-            final PoopInfo poopInfo = new PoopInfo();
-            poopInfo.setConsistency(resultSet.getInt(2));
-            poopInfo.setCreationDate(new Instant(resultSet.getTimestamp(3)));
-            poopInfo.setUserId(resultSet.getInt(1));
+            final PoopInfo poopInfo = poopRowMapper(resultSet);
             poops.add(poopInfo);
         }
 
         return poops.build();
     }
+
 
     public PoopMetrics getPoopMetrics(final Integer userId) throws SQLException {
         final ResultSet resultSet = getJdbcConnection().createStatement().executeQuery(String.format(GET_POOP_METRICS_SQL, userId));
@@ -108,6 +131,7 @@ public class PoopDao extends SqliteDao{
     }
 
     public void initPoopMetricsTable(final Integer userId) {
+        System.out.println("initing poop metrics table for user" + userId);
         try {
             final PreparedStatement insertMetrics = this.getJdbcConnection().prepareStatement(INSERT_POOP_METRICS_SQL);
             insertMetrics.setInt(1, userId);
@@ -129,8 +153,28 @@ public class PoopDao extends SqliteDao{
         insertPoop.executeUpdate();
     }
 
+    public int getNextSequenceVal() throws SQLException {
+        final Statement getPoops = getJdbcConnection().createStatement();
+        final ResultSet resultSet = getPoops.executeQuery(NEXT_VAL_POOP_ID_SEQ);
+        if(resultSet.next()) {
+            return resultSet.getInt(1);
+        } else {
+            throw new RuntimeException("Unable to get next sequence number for poops dao");
+
+        }
+    }
+
+    private PoopInfo poopRowMapper(final ResultSet resultSet)
+            throws SQLException {
+        final PoopInfo poopInfo = new PoopInfo();
+        poopInfo.setConsistency(resultSet.getInt(2));
+        poopInfo.setCreationDate(new Instant(resultSet.getTimestamp(3)));
+        poopInfo.setUserId(resultSet.getInt(1));
+        return poopInfo;
+    }
+
     @Override
     List<String> getSchemaSql() {
-        return ImmutableList.of(CREATE_POOP_METRICS_SQL, CREATE_POOPS_SQL);
+        return ImmutableList.of(CREATE_SEQUENCE, CREATE_POOP_METRICS_SQL, CREATE_POOPS_SQL);
     }
 }
