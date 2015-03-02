@@ -38,7 +38,7 @@ public class GroupMeResourceTest {
             @Override
             public void run() {
               try {
-                server = PooMeApplication.startServer(Domain.TEST, 8080);
+                server = PooMeApplication.startServer(8080);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 throw new RuntimeException(e);

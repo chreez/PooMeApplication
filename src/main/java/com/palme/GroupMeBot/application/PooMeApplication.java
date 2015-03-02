@@ -23,16 +23,6 @@ public class PooMeApplication {
      * @throws Exception
      */
     public static void main(final String[] args) throws Exception {
-//        URI dbUri = new URI(System.getenv("DATABASE_URL"));
-//
-//        String username = dbUri.getUserInfo().split(":")[0];
-//        String password = dbUri.getUserInfo().split(":")[1];
-//        int port = dbUri.getPort();
-//
-//        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + port + dbUri.getPath();
-//        DriverManager.getConnection(dbUrl, username, password);
-
-
 //        // The port that we should run on can be set into an environment variable
 //        // Look for that variable and default to 8080 if it isn't there.
         String webPort = System.getenv("PORT");
