@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import com.palme.GroupMeBot.dao.model.UserInfo;
 
 public class UsersDao extends SqliteDao {
-    final private static String CREATE_USERS_SQL = "create table IF NOT EXISTS users (user_id integer primary key, login text, last_updated_date integer, last_poo_row_id integer);";
+    final private static String CREATE_USERS_SQL = "create table IF NOT EXISTS users (user_id integer primary key, login text, last_updated_date timestamp, last_poo_row_id integer);";
     final private static String INSERT_USER_SQL = "INSERT INTO USERS (user_id, login, last_updated_date) VALUES (?, ?, ?);";
     final private static String GET_USERS_SQL = "SELECT * FROM users WHERE user_id in (%s);";
     final private static String GET_ALL_USERS_SQL = "SELECT * FROM users WHERE user_id in (%s);";
@@ -67,7 +68,7 @@ public class UsersDao extends SqliteDao {
             final PreparedStatement insertUser = getJdbcConnection().prepareStatement(INSERT_USER_SQL);
             insertUser.setLong(1, user_id.longValue());;
             insertUser.setString(2, login);
-            insertUser.setDate(3, new Date(new Instant().getMillis()));
+            insertUser.setTimestamp(3, new Timestamp(Instant.now().getMillis()));
             final int rowId = insertUser.executeUpdate();
             return rowId == 0 ? null : rowId;
         } catch (SQLException e) {
@@ -100,7 +101,7 @@ public class UsersDao extends SqliteDao {
             final UserInfo userInfo = new UserInfo();
             userInfo.setUserId(resultSet.getInt(1));
             userInfo.setLogin(resultSet.getString(2));
-            userInfo.setLastUpdatedDate(new Instant(resultSet.getLong(3)));
+            userInfo.setLastUpdatedDate(new Instant(resultSet.getTimestamp(3)));
             userInfo.setLastPooRowIndex(resultSet.getInt(4) == 0 ? null: resultSet.getInt(4));
 
             userInfos.put(userInfo.getUserId(), Optional.of(userInfo));
@@ -128,7 +129,7 @@ public class UsersDao extends SqliteDao {
             final UserInfo userInfo = new UserInfo();
             userInfo.setUserId(resultSet.getInt(1));
             userInfo.setLogin(resultSet.getString(2));
-            userInfo.setLastUpdatedDate(new Instant(resultSet.getLong(3)));
+            userInfo.setLastUpdatedDate(new Instant(resultSet.getTimestamp(3)));
             userInfo.setLastPooRowIndex(resultSet.getInt(4) == 0 ? null: resultSet.getInt(4));
 
             userInfos.add(userInfo);
@@ -147,7 +148,7 @@ public class UsersDao extends SqliteDao {
                 String.format(UPDATE_USERS_SQL, userInfo.getUserId()));
 
         insertUser.setString(1, userInfo.getLogin());
-        insertUser.setDate(2, new Date(Instant.now().getMillis()));
+        insertUser.setTimestamp(2, new Timestamp(Instant.now().getMillis()));
         if(userInfo.getLastPooRowIndex() == null) {
             insertUser.setNull(3, Types.INTEGER);
         } else {

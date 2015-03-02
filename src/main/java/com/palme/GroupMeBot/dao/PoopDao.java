@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -25,7 +26,7 @@ import com.palme.GroupMeBot.dao.model.UserInfo;
  *
  */
 public class PoopDao extends SqliteDao{
-    static private final String CREATE_POOPS_SQL = "create table IF NOT EXISTS poops (user_id integer, consistency integer, creation_date integer);";
+    static private final String CREATE_POOPS_SQL = "create table IF NOT EXISTS poops (user_id integer, consistency integer, creation_date timestamp);";
     static private final String CREATE_POOP_METRICS_SQL = "create table IF NOT EXISTS poop_metrics ( user_id integer primary key, poo_count integer, consistency_avg real, frequency_avg real);";
 
     static private final String INSERT_POOP_METRICS_SQL = "INSERT INTO POOP_METRICS (user_id, poo_count, consistency_avg, frequency_avg) VALUES (?,?,?,?);";
@@ -70,7 +71,7 @@ public class PoopDao extends SqliteDao{
         final PreparedStatement insertPoop = getJdbcConnection().prepareStatement(INSERT_POOP_SQL);
         insertPoop.setInt(1, userInfo.getUserId());
         insertPoop.setInt(2, newPoop.getConsistency());
-        insertPoop.setDate(3, new Date(newPoop.getCreationDate().getMillis()));
+        insertPoop.setTimestamp(3, new Timestamp(newPoop.getCreationDate().getMillis()));
         final Integer rowId = insertPoop.executeUpdate();
 
         final PoopMetrics newMetrics = metrics.updateMetrics(oldPoopInfo, newPoop);
@@ -86,7 +87,7 @@ public class PoopDao extends SqliteDao{
         while(resultSet.next()) {
             final PoopInfo poopInfo = new PoopInfo();
             poopInfo.setConsistency(resultSet.getInt(2));
-            poopInfo.setCreationDate(new Instant(resultSet.getDate(3)));
+            poopInfo.setCreationDate(new Instant(resultSet.getTimestamp(3)));
             poopInfo.setUserId(resultSet.getInt(1));
             poops.add(poopInfo);
         }
