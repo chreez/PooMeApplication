@@ -40,7 +40,8 @@ public class GroupMeResourceTest {
               try {
                 server = PooMeApplication.startServer(Domain.TEST, 8080);
             } catch (Exception e) {
-                throw new RuntimeException();
+                System.out.println(e.getMessage());
+                throw new RuntimeException(e);
             }
             }
         });

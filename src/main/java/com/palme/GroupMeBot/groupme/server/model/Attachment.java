@@ -2,27 +2,30 @@ package com.palme.GroupMeBot.groupme.server.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Attachment {
     private AttachmentType type;
-    
+
     //image url
     private String url;
-    
+
     //Begin location attachment type
     private String lat;
     private String lng;
     private String name;
-    
+
     //Begin emoji
     private String placeholder;
     private List<List<Integer>> charmap;
-    
-    
+
+
     public AttachmentType getType() {
         return type;
     }
 
-    public void setType(AttachmentType type) {
+    public void setType(final AttachmentType type) {
         this.type = type;
     }
 
@@ -30,7 +33,7 @@ public class Attachment {
         return url;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(final String url) {
         this.url = url;
     }
 
@@ -38,7 +41,7 @@ public class Attachment {
         return placeholder;
     }
 
-    public void setPlaceholder(String placeholder) {
+    public void setPlaceholder(final String placeholder) {
         this.placeholder = placeholder;
     }
 
@@ -46,7 +49,7 @@ public class Attachment {
         return charmap;
     }
 
-    public void setCharmap(List<List<Integer>> charmap) {
+    public void setCharmap(final List<List<Integer>> charmap) {
         this.charmap = charmap;
     }
 
@@ -54,7 +57,7 @@ public class Attachment {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -62,7 +65,7 @@ public class Attachment {
         return lng;
     }
 
-    public void setLng(String lng) {
+    public void setLng(final String lng) {
         this.lng = lng;
     }
 
@@ -70,7 +73,7 @@ public class Attachment {
         return lat;
     }
 
-    public void setLat(String lat) {
+    public void setLat(final String lat) {
         this.lat = lat;
     }
 }

@@ -55,8 +55,7 @@ public class GroupMeResourceImpl implements GroupMeResource {
         }
         if(processors == null) {
             System.out.println(" init processors");
-            Class.forName("org.sqlite.JDBC");
-//            final Connection connection =   getConnection(domain);
+            final Connection connection =   getConnection(domain);
 //            new WouldYouRatherProcessor(client),
 //            new PooProcessor(client, connection),
             processors = ImmutableList.of(new WillProcessor());
@@ -69,21 +68,6 @@ public class GroupMeResourceImpl implements GroupMeResource {
     }
 
     public Connection getConnection(final Domain domain) throws URISyntaxException, SQLException {
-//        if(Domain.TEST.equals(domain)) {
-////            return DriverManager.getConnection("jdbc:sqlite:GroupMeBotDB.db");
-//        }
-//        final URI dbUri = new URI(System.getenv("DATABASE_URL"));
-//
-//        final String username = dbUri.getUserInfo().split(":")[0];
-//        System.out.println(username);
-//        final String password = dbUri.getUserInfo().split(":")[1];
-//        System.out.println(password);
-//        System.out.println(dbUri.getHost() );
-//        System.out.println(dbUri.getPath() );
-//        final String dbUrl = "jdbc:mysql://" + dbUri.getHost() + dbUri.getPath();
-//
-//        return DriverManager.getConnection("jdbc:" + System.getenv("DATABASE_URL"), username, password);
-
         URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
         String username = dbUri.getUserInfo().split(":")[0];

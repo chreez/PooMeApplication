@@ -20,14 +20,14 @@ public class IncomingGroupMeMessage {
     private String text;
     private Boolean system;
     private List<String> favorited_by;
-    private List<String> attachments;
+    private List<Attachment> attachments;
 
     public IncomingGroupMeMessage() {}
 
     public IncomingGroupMeMessage(final String id, final String source_guid,
             final Long created_at, final String user_id, final String group_id, final String name,
             final String avatar_url, final String text, final Boolean system,
-            final List<String> favorited_by, final List<String> attachments) {
+            final List<String> favorited_by, final List<Attachment> attachments) {
         super();
         this.id = id;
         this.source_guid = source_guid;
@@ -79,7 +79,7 @@ public class IncomingGroupMeMessage {
         this.system = system;
     }
 
-    public void setAttachments(final List<String> attachments) {
+    public void setAttachments(final List<Attachment> attachments) {
         this.attachments = attachments;
     }
 
@@ -111,7 +111,7 @@ public class IncomingGroupMeMessage {
         return system;
     }
 
-    public List<String> getAttachments() {
+    public List<Attachment> getAttachments() {
         return attachments;
     }
 
