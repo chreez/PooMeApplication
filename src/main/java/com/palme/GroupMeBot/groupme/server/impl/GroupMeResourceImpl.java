@@ -57,8 +57,10 @@ public class GroupMeResourceImpl implements GroupMeResource {
             System.out.println(" init processors");
             final Connection connection =   getConnection(domain);
 //            new WouldYouRatherProcessor(client),
-//            new PooProcessor(client, connection),
-            processors = ImmutableList.of(new WillProcessor());
+
+            processors = ImmutableList.of(
+                    new PooProcessor(client, connection),
+                    new WillProcessor());
         } else {
             System.out.println("processors already init");
         }

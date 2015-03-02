@@ -21,7 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.palme.GroupMeBot.dao.model.UserInfo;
 
 public class UsersDao extends SqliteDao {
-    final private static String CREATE_USERS_SQL = "create table users (user_id integer primary key, login text, last_updated_date integer, last_poo_row_id integer);";
+    final private static String CREATE_USERS_SQL = "create table IF NOT EXISTS users (user_id integer primary key, login text, last_updated_date integer, last_poo_row_id integer);";
     final private static String INSERT_USER_SQL = "INSERT INTO USERS (user_id, login, last_updated_date) VALUES (?, ?, ?);";
     final private static String GET_USERS_SQL = "SELECT * FROM users WHERE user_id in (%s);";
     final private static String GET_ALL_USERS_SQL = "SELECT * FROM users WHERE user_id in (%s);";

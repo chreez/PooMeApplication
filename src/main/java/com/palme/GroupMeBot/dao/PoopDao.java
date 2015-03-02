@@ -25,8 +25,8 @@ import com.palme.GroupMeBot.dao.model.UserInfo;
  *
  */
 public class PoopDao extends SqliteDao{
-    static private final String CREATE_POOPS_SQL = "create table poops (user_id integer, consistency integer, creation_date integer);";
-    static private final String CREATE_POOP_METRICS_SQL = "create table poop_metrics ( user_id integer primary key, poo_count integer, consistency_avg real, frequency_avg real);";
+    static private final String CREATE_POOPS_SQL = "create table IF NOT EXISTS poops (user_id integer, consistency integer, creation_date integer);";
+    static private final String CREATE_POOP_METRICS_SQL = "create table IF NOT EXISTS poop_metrics ( user_id integer primary key, poo_count integer, consistency_avg real, frequency_avg real);";
 
     static private final String INSERT_POOP_METRICS_SQL = "INSERT INTO POOP_METRICS (user_id, poo_count, consistency_avg, frequency_avg) VALUES (?,?,?,?);";
     static private final String GET_POOP_METRICS_SQL = "SELECT user_id, poo_count, consistency_avg, frequency_avg FROM POOP_METRICS WHERE USER_ID = %s;";
