@@ -1,1 +1,2 @@
 web: java $JAVA_OPTS -cp target/classes:target/dependency/* com.palme.GroupMeBot.application.PooMeApplication
+worker: java $JAVA_OPTS -cp target/classes:target/dependency/* com.palme.GroupMeBot.apps.WouldYouRatherApp

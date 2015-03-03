@@ -32,6 +32,12 @@ public class WouldYouRatherApp implements Runnable {
     private Instant heartbeat = new Instant();
     private final int intervalHours;
 
+    public static void main(final String[] args) throws InterruptedException {
+        while(true) {
+            Thread.sleep(10000);
+            System.out.println("WORKER");
+        }
+    }
     /**
      *
      * @param groupMeClient
