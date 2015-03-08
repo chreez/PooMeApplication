@@ -5,9 +5,15 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+
+
+
+
 import org.joda.time.Instant;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.palme.GroupMeBot.dao.AchievementsDao;
@@ -25,11 +31,9 @@ import com.palme.GroupMeBot.processor.model.PooMessage;
 public final class PooProcessor extends AbstractProcessor<PooMessage> {
 
     final private static List<String> POO_KEY_WORDS  = ImmutableList.of("🍫", "💩");
-    private final GroupMeClient client;
     private final PoopHandler pooHandler;
 
-    public PooProcessor(final GroupMeClient client, final Connection jdbcConnection) throws SQLException {
-        this.client = client;
+    public PooProcessor(final Connection jdbcConnection) throws SQLException {
         this.pooHandler = new PoopHandler(new PoopDao(jdbcConnection),
                 new AchievementsDao(), new UsersDao(jdbcConnection));
     }
@@ -44,15 +48,38 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
         final PooMessage pooMessage = new PooMessage(message);
 
         final String text = pooMessage.getText();
-        final String keywordFound;
+        String keywordFound = POO_KEY_WORDS.get(1);
         for(final String keyword : POO_KEY_WORDS) {
             if(text.contains(keyword)) {
                 keywordFound = keyword;
                 break;
             }
         }
+
+        final Iterable<String> parsedResult = Splitter
+                .on(keywordFound)
+                .omitEmptyStrings()
+                .split(text);
+        Integer consistency = null;
+        for(final String token : parsedResult) {
+            try{
+                consistency = Integer.valueOf(token.trim());
+                if(consistency < 0 || consistency >= 8) {
+                    consistency = null;
+                }
+                break;
+            } catch(NumberFormatException | NullPointerException e) {
+                continue;
+            }
+        }
+
+        pooMessage.setConsistency(consistency);
         pooMessage.setReportPooMetrics(text.toUpperCase().contains("STATUS"));
+        pooMessage.setRequestedLeaderboard(text.toUpperCase().contains("LEADERBOARD"));
+        pooMessage.setRequestedPooTypeTable(text.toUpperCase().contains("TYPES"));
         System.out.println("Showing stats?"+ pooMessage.isReportPooMetrics());
+        System.out.println("Showing poo type table?"+ pooMessage.isRequestedPooTypeTable());
+        System.out.println("Showing leaderboard?"+ pooMessage.isRequestedLeaderboard());
         return pooMessage;
     }
 
@@ -67,8 +94,13 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
         try {
             if(message.isReportPooMetrics()) {
                 return getMessageToGroup(pooHandler.getUserStatus(userDetails));
+            } else if(message.isRequestedPooTypeTable()) {
+                //TODO:
+                return ImmutableMap.of();
+            } else if(message.isRequestedLeaderboard()) {
+                return getMessageToGroup(Optional.of(pooHandler.getLeaderBoard()));
             } else {
-                return getMessageToGroup(pooHandler.handleThePoop(userDetails, new PoopInfo(Integer.valueOf(userDetails.getId()), 5, Instant.now())));
+                return getMessageToGroup(pooHandler.handleThePoop(userDetails, new PoopInfo(Integer.valueOf(userDetails.getId()), message.getConsistency(), Instant.now())));
             }
         } catch (SQLException e) {
             return ImmutableMap.of();
@@ -101,13 +133,7 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
         if(containsKeyWord == false) {
             return false;
         }
-
-
         return true;
-
-        //TODO confirm a number detailing consistency
-
-//        return POO_KEY_WORDS.contains(message.getText());
     }
 
 

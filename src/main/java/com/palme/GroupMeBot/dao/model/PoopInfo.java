@@ -48,6 +48,27 @@ public class PoopInfo implements Comparable<PoopInfo> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(this.consistency, this.creationDate, this.userId);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if(obj == null) {
+            return false;
+        }
+        if(obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        final PoopInfo other = (PoopInfo) obj;
+
+        return Objects.equal(other.getConsistency(), this.consistency)
+                && Objects.equal(other.getCreationDate(), this.creationDate)
+                && Objects.equal(other.getUserId(), this.userId);
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("uid", userId).add("consist", consistency).add("creationdate", creationDate).toString();
     }

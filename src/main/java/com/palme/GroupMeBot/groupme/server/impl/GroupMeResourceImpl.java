@@ -41,8 +41,6 @@ public class GroupMeResourceImpl implements GroupMeResource {
 
     private List<AbstractProcessor<?>> processors;
     private GroupMeClient client;
-////    private final int bootStrapCode;
-//    private final String BOT_USER_ID = null;
 
     public GroupMeResourceImpl() throws SQLException, ClassNotFoundException, URISyntaxException {
         final Domain domain = Domain.valueOf(System.getenv("DOMAIN"));
@@ -59,14 +57,11 @@ public class GroupMeResourceImpl implements GroupMeResource {
 //            new WouldYouRatherProcessor(client),
 
             processors = ImmutableList.of(
-                    new PooProcessor(client, connection),
+                    new PooProcessor(connection),
                     new WillProcessor());
         } else {
             System.out.println("processors already init");
         }
-
-//        this.bootStrapCode = new Random().nextInt(100);
-//        client.sendMessage(bootStrapCode + ": Bootstrapping bot by registering this number.. Disregard.");
     }
 
     public Connection getConnection(final Domain domain) throws URISyntaxException, SQLException {

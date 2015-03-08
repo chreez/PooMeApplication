@@ -6,8 +6,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -36,21 +38,13 @@ public class PoopDao extends SqliteDao{
     static private final String INSERT_POOP_METRICS_SQL = "INSERT INTO POOP_METRICS (user_id, poo_count, consistency_avg, frequency_avg) VALUES (?,?,?,?);";
     static private final String GET_POOP_METRICS_SQL = "SELECT user_id, poo_count, consistency_avg, frequency_avg FROM POOP_METRICS WHERE USER_ID = %s;";
     static private final String UPDATE_POOP_METRICS = "UPDATE POOP_METRICS SET poo_count = ? , consistency_avg = ? , frequency_avg = ? WHERE USER_ID = %s;";
+    static private final String GET_ALL_POOP_METRICS_SQL = "SELECT user_id, poo_count, consistency_avg, frequency_avg FROM POOP_METRICS;";
 
     static private final String INSERT_POOP_SQL = "INSERT INTO poops (user_id, consistency, creation_date, poop_id) VALUES (?, ?, ?, ? );";
     static private final String GET_POOP_SQL = "SELECT consistency, creation_date FROM POOPS WHERE poop_id = %s;";
     static private final String GET_POOPS_SQL = "SELECT * FROM POOPS WHERE user_id = %s;";
 
     static private final String NEXT_VAL_POOP_ID_SEQ = "SELECT nextval('POOP_ID_SEQ');";
-
-
-
-    public static void main(final String[] args) throws ClassNotFoundException, SQLException {
-        Class.forName("org.sqlite.JDBC");
-        final Connection c = DriverManager.getConnection("jdbc:sqlite:GroupMeBotDB_331.db");
-        final PoopDao poopDao = new PoopDao(c);
-        poopDao.initPoopMetricsTable(12322);
-    }
 
     public PoopDao(final Connection jdbcConnection) throws SQLException {
         super(jdbcConnection);
@@ -93,12 +87,16 @@ public class PoopDao extends SqliteDao{
         System.out.println("Inserting poop");
         final PreparedStatement insertPoop = getJdbcConnection().prepareStatement(INSERT_POOP_SQL);
         insertPoop.setInt(1, userInfo.getUserId());
-        insertPoop.setInt(2, newPoop.getConsistency());
+        if(newPoop.getConsistency() != null) {
+            insertPoop.setInt(2, newPoop.getConsistency());
+        } else {
+            insertPoop.setNull(2, Types.INTEGER);
+        }
         insertPoop.setTimestamp(3, new Timestamp(newPoop.getCreationDate().getMillis()));
         insertPoop.setInt(4, poop_id);
         insertPoop.executeUpdate();
 
-        final PoopMetrics newMetrics = metrics.updateMetrics(oldPoopInfo, newPoop);
+        final PoopMetrics newMetrics = metrics.updateMetrics(getAllPoopsForUser(userInfo.getUserId()));
         updatePoopMetrics(newMetrics);
         System.out.println("Update metrics" + newMetrics);
 
@@ -117,16 +115,30 @@ public class PoopDao extends SqliteDao{
         return poops.build();
     }
 
+    public SortedSet<PoopMetrics> getAllPoopMetrics() throws SQLException {
+        final ImmutableSortedSet.Builder<PoopMetrics> resultBuilder = ImmutableSortedSet.naturalOrder();
+        final ResultSet resultSet = getJdbcConnection().createStatement().executeQuery(String.format(GET_ALL_POOP_METRICS_SQL));
+        while(resultSet.next()) {
+            resultBuilder.add(poopMetricsRowMapper(resultSet));
+        }
+        return resultBuilder.build();
+    }
 
     public PoopMetrics getPoopMetrics(final Integer userId) throws SQLException {
         final ResultSet resultSet = getJdbcConnection().createStatement().executeQuery(String.format(GET_POOP_METRICS_SQL, userId));
-        final PoopMetrics result = new PoopMetrics();
         if(resultSet.next()){
-            result.setUserId(userId);
+            return poopMetricsRowMapper(resultSet);
+        } else {
+            return null;
+        }
+    }
+
+    private PoopMetrics poopMetricsRowMapper(final ResultSet resultSet) throws SQLException {
+        final PoopMetrics result = new PoopMetrics();
+            result.setUserId(resultSet.getInt(1));
             result.setPooCount(resultSet.getInt(2));
             result.setConsistencyAvg(resultSet.getFloat(3));
             result.setFrequencyAvgMillis(resultSet.getInt(4));
-        }
         return result;
     }
 

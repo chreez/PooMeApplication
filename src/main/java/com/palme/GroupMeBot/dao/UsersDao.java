@@ -1,7 +1,6 @@
 package com.palme.GroupMeBot.dao;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +18,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.palme.GroupMeBot.dao.model.UserInfo;
 
 public class UsersDao extends SqliteDao {
@@ -75,6 +75,10 @@ public class UsersDao extends SqliteDao {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public UserInfo getUserInfo(final Integer userId) throws SQLException {
+        return Iterables.getOnlyElement(getUserInfos(ImmutableList.of(userId)).entrySet()).getValue().get();
     }
 
     /**

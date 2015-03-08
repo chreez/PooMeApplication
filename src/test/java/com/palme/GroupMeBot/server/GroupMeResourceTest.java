@@ -91,10 +91,44 @@ public class GroupMeResourceTest {
         target = c.target(PooMeApplication.BASE_URI);
 
         IncomingGroupMeMessage message = new IncomingGroupMeMessage();
-        message.setUser_id("123");
+        message.setUser_id("17318362");
         message.setSender_type("user");
         message.setName("chris");
         message.setText("" + POO_KEY_WORDS.get(0));
+
+        final String entity = new ObjectMapper().writeValueAsString(message);
+
+        final Response response = target.path("bot_callback").request().post(Entity.json(entity));
+        assertEquals(204, response.getStatus());
+    }
+
+    @Test
+    public void leaderBoard() throws IOException, URISyntaxException {
+        Client c = ClientBuilder.newClient();
+        target = c.target(PooMeApplication.BASE_URI);
+
+        IncomingGroupMeMessage message = new IncomingGroupMeMessage();
+        message.setUser_id("17318362");
+        message.setSender_type("user");
+        message.setName("chris");
+        message.setText("leaderboard" + POO_KEY_WORDS.get(1));
+
+        final String entity = new ObjectMapper().writeValueAsString(message);
+
+        final Response response = target.path("bot_callback").request().post(Entity.json(entity));
+        assertEquals(204, response.getStatus());
+    }
+
+    @Test
+    public void badPoop() throws IOException, URISyntaxException {
+        Client c = ClientBuilder.newClient();
+        target = c.target(PooMeApplication.BASE_URI);
+
+        IncomingGroupMeMessage message = new IncomingGroupMeMessage();
+        message.setUser_id("17318362");
+        message.setSender_type("user");
+        message.setName("chris");
+        message.setText("1" + POO_KEY_WORDS.get(1));
 
         final String entity = new ObjectMapper().writeValueAsString(message);
 

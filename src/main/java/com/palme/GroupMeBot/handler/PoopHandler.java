@@ -1,6 +1,8 @@
 package com.palme.GroupMeBot.handler;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.SortedSet;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -43,7 +45,7 @@ public class PoopHandler {
         userInfo.setLastPooRowIndex(lastPoopRowId);
         usersDao.updateUser(userInfo);
 
-        final String result = achievementsDao.getAchievementForPoopMetrics(poopDao.getPoopMetrics(userInfo.getUserId()));
+        final String result = achievementsDao.getAchievementForPoopMetrics(newPoop, poopDao.getPoopMetrics(userInfo.getUserId()));
         if(result == null) {
             return Optional.absent();
         } else {
@@ -66,5 +68,20 @@ public class PoopHandler {
             final String message = String.format(STATUS_FORMAT, userInfo.getLogin(), metrics.getPooCount());
             System.out.println(message  + "message?!?!?!" );
             return Optional.of(message );
+    }
+
+    public String getLeaderBoard() throws SQLException {
+        final List<PoopMetrics> allPoopMetrics = ImmutableList.copyOf(this.poopDao.getAllPoopMetrics());
+        int i = 0;
+
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Champions of the Poop\n----------------------------\nName-Count-Consistency\n");
+        for(final PoopMetrics poopMetrics : allPoopMetrics) {
+            if(i<3) {
+                builder.append(String.format("%s-%d-%.02f%n", usersDao.getUserInfo(poopMetrics.getUserId()).getLogin(), poopMetrics.getPooCount(), poopMetrics.getConsistencyAvg()));
+            }
+            i++;
+        }
+        return builder.toString();
     }
 }
