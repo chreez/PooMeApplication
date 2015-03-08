@@ -111,7 +111,7 @@ public class GroupMeResourceImpl implements GroupMeResource {
 
         for(final Entry<String, OutgoingGroupMeMessage> entry : outGoingMessages.build().entries()) {
             if(OutgoingGroupMeMessage.GENERIC_GROUP_ID.equals(entry.getKey())) {
-                client.sendMessage(entry.getValue().getText());
+                client.sendMessage(entry.getValue());
             } else {
                 //TODO: Direct message support not avail
             }

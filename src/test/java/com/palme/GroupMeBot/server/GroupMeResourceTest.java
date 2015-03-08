@@ -136,6 +136,23 @@ public class GroupMeResourceTest {
         assertEquals(204, response.getStatus());
     }
 
+    @Test
+    public void helpTest() throws IOException, URISyntaxException {
+        Client c = ClientBuilder.newClient();
+        target = c.target(PooMeApplication.BASE_URI);
+
+        IncomingGroupMeMessage message = new IncomingGroupMeMessage();
+        message.setUser_id("17318362");
+        message.setSender_type("user");
+        message.setName("chris");
+        message.setText("help" + POO_KEY_WORDS.get(1));
+
+        final String entity = new ObjectMapper().writeValueAsString(message);
+
+        final Response response = target.path("bot_callback").request().post(Entity.json(entity));
+        assertEquals(204, response.getStatus());
+    }
+
 //    @Test
     public void postItSingleton() throws IOException, URISyntaxException {
         Client c = ClientBuilder.newClient();

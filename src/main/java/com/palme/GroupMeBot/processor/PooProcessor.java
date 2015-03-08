@@ -5,13 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-
-
-
-
 import org.joda.time.Instant;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -20,8 +15,9 @@ import com.palme.GroupMeBot.dao.AchievementsDao;
 import com.palme.GroupMeBot.dao.PoopDao;
 import com.palme.GroupMeBot.dao.UsersDao;
 import com.palme.GroupMeBot.dao.model.PoopInfo;
-import com.palme.GroupMeBot.groupme.client.GroupMeClient;
 import com.palme.GroupMeBot.groupme.client.UserDetails;
+import com.palme.GroupMeBot.groupme.server.model.Attachment;
+import com.palme.GroupMeBot.groupme.server.model.AttachmentType;
 import com.palme.GroupMeBot.groupme.server.model.IncomingGroupMeMessage;
 import com.palme.GroupMeBot.groupme.server.model.MessageType;
 import com.palme.GroupMeBot.groupme.server.model.OutgoingGroupMeMessage;
@@ -76,7 +72,7 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
         pooMessage.setConsistency(consistency);
         pooMessage.setReportPooMetrics(text.toUpperCase().contains("STATUS"));
         pooMessage.setRequestedLeaderboard(text.toUpperCase().contains("LEADERBOARD"));
-        pooMessage.setRequestedPooTypeTable(text.toUpperCase().contains("TYPES"));
+        pooMessage.setRequestedPooTypeTable(text.toUpperCase().contains("HELP"));
         System.out.println("Showing stats?"+ pooMessage.isReportPooMetrics());
         System.out.println("Showing poo type table?"+ pooMessage.isRequestedPooTypeTable());
         System.out.println("Showing leaderboard?"+ pooMessage.isRequestedLeaderboard());
@@ -95,8 +91,15 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
             if(message.isReportPooMetrics()) {
                 return getMessageToGroup(pooHandler.getUserStatus(userDetails));
             } else if(message.isRequestedPooTypeTable()) {
-                //TODO:
-                return ImmutableMap.of();
+                final OutgoingGroupMeMessage outgoingMessage = new OutgoingGroupMeMessage(MessageType.POST_TO_GROUP, "In order to register a poop, it is recommended that you use the "
+                        + POO_KEY_WORDS.get(1) +
+                        " emoji and follow it with a single digit number which counts as consistency. Use this chart as a guide to determine what conistency your poop is. Now fuck off.");
+                final Attachment image = new Attachment();
+                image.setType(AttachmentType.image);
+                image.setUrl("http://i.imgur.com/OVbkCP6.png");
+                outgoingMessage.setAttachments(ImmutableList.of(image));
+                System.out.println(outgoingMessage);
+                return ImmutableMap.of(OutgoingGroupMeMessage.GENERIC_GROUP_ID, outgoingMessage);
             } else if(message.isRequestedLeaderboard()) {
                 return getMessageToGroup(Optional.of(pooHandler.getLeaderBoard()));
             } else {
