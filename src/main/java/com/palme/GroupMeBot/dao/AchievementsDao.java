@@ -27,7 +27,7 @@ public class AchievementsDao {
             return getNotCongratsTerm() + String.format("Maybe you should try more fibrez in your diet.");
         }
 
-        if(lastPoop.getConsistency() == 0) {
+        if(lastPoop.getConsistency() == 1) {
             return getNotCongratsTerm() + String.format("Maybe you should try some laxatives.");
         }
 
