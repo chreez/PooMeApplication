@@ -44,7 +44,7 @@ public class PoopHandler {
         final int lastPoopRowId = poopDao.createPoop(newPoop, userInfo);
         userInfo.setLastPooRowIndex(lastPoopRowId);
         usersDao.updateUser(userInfo);
-
+        System.out.println("going to see if achieves?");
         final String result = achievementsDao.getAchievementForPoopMetrics(newPoop, poopDao.getPoopMetrics(userInfo.getUserId()));
         if(result == null) {
             return Optional.absent();

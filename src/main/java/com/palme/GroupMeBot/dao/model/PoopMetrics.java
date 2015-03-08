@@ -17,7 +17,6 @@ public class PoopMetrics implements Comparable<PoopMetrics>{
         float consistencyTotal = 0;
         int totalMillisBetweenEachPoop = 0;
         PoopInfo lastPoop = null;
-
         for(final PoopInfo poop: poops) {
             poopCount++;
             if(poop.getConsistency() !=null) {

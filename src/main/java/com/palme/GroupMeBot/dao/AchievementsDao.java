@@ -22,6 +22,7 @@ public class AchievementsDao {
             return getCongratsTerm() + String.format("You've pooped %d times so far!", poopMetrics.getPooCount());
         }
 
+        System.out.println(lastPoop + "asdasd");
         if(lastPoop.getConsistency() == 7) {
             return getNotCongratsTerm() + String.format("Maybe you should try more fibrez in your diet.");
         }
