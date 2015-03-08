@@ -120,6 +120,7 @@ public class PoopDao extends SqliteDao{
         final ResultSet resultSet = getJdbcConnection().createStatement().executeQuery(String.format(GET_ALL_POOP_METRICS_SQL));
         while(resultSet.next()) {
             resultBuilder.add(poopMetricsRowMapper(resultSet));
+            System.out.println("Got metrics");
         }
         return resultBuilder.build();
     }
@@ -132,13 +133,15 @@ public class PoopDao extends SqliteDao{
             return null;
         }
     }
-
+//    static private final String GET_ALL_POOP_METRICS_SQL = "SELECT user_id, poo_count, consistency_avg, frequency_avg FROM POOP_METRICS;";
+//    static private final String GET_POOP_METRICS_SQL = "SELECT user_id, poo_count, consistency_avg, frequency_avg FROM POOP_METRICS WHERE USER_ID = %s;";
     private PoopMetrics poopMetricsRowMapper(final ResultSet resultSet) throws SQLException {
         final PoopMetrics result = new PoopMetrics();
-            result.setUserId(resultSet.getInt(1));
-            result.setPooCount(resultSet.getInt(2));
-            result.setConsistencyAvg(resultSet.getFloat(3));
-            result.setFrequencyAvgMillis(resultSet.getInt(4));
+        result.setUserId(resultSet.getInt(1));
+        result.setPooCount(resultSet.getInt(2));
+        result.setConsistencyAvg(resultSet.getFloat(3));
+        result.setFrequencyAvgMillis(resultSet.getInt(4));
+        System.out.println("inside rowmapper" + result);
         return result;
     }
 

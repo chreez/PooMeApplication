@@ -19,9 +19,10 @@ public class PoopMetrics implements Comparable<PoopMetrics>{
         PoopInfo lastPoop = null;
         for(final PoopInfo poop: poops) {
             poopCount++;
-            if(poop.getConsistency() !=null) {
+            if(poop.getConsistency() !=null && !Integer.valueOf(0).equals(poop.getConsistency())) {
                 poopCountsWithConsistency++;
                 consistencyTotal += poop.getConsistency();
+            }else {
             }
             if(lastPoop != null) {
                 totalMillisBetweenEachPoop += (poop.getCreationDate().getMillis() - lastPoop.getCreationDate().getMillis());
@@ -89,8 +90,7 @@ public class PoopMetrics implements Comparable<PoopMetrics>{
 
     @Override
     public int compareTo(final PoopMetrics o) {
-        // TODO Auto-generated method stub
-        return 0;
+        return o.getPooCount().compareTo(this.getPooCount());
     }
 
   @Override

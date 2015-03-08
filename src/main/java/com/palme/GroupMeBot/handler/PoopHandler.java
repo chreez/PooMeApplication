@@ -44,7 +44,7 @@ public class PoopHandler {
         final int lastPoopRowId = poopDao.createPoop(newPoop, userInfo);
         userInfo.setLastPooRowIndex(lastPoopRowId);
         usersDao.updateUser(userInfo);
-        System.out.println("going to see if achieves?");
+        System.out.println("going to see if achieves? " + newPoop);
         final String result = achievementsDao.getAchievementForPoopMetrics(newPoop, poopDao.getPoopMetrics(userInfo.getUserId()));
         if(result == null) {
             return Optional.absent();
@@ -72,13 +72,15 @@ public class PoopHandler {
 
     public String getLeaderBoard() throws SQLException {
         final List<PoopMetrics> allPoopMetrics = ImmutableList.copyOf(this.poopDao.getAllPoopMetrics());
+        System.out.println(allPoopMetrics);
         int i = 0;
 
         final StringBuilder builder = new StringBuilder();
-        builder.append("Champions of the Poop\n----------------------------\nName-Count-Consistency\n");
+        builder.append("Champions of the Poop\n----------------------------\nName - Count - Consistency\n");
         for(final PoopMetrics poopMetrics : allPoopMetrics) {
-            if(i<3) {
-                builder.append(String.format("%s-%d-%.02f%n", usersDao.getUserInfo(poopMetrics.getUserId()).getLogin(), poopMetrics.getPooCount(), poopMetrics.getConsistencyAvg()));
+            System.out.println("LEADERBOARD: " + poopMetrics);
+            if(i<5) {
+                builder.append(String.format("%s - %d - %.01f%n", usersDao.getUserInfo(poopMetrics.getUserId()).getLogin(), poopMetrics.getPooCount(), poopMetrics.getConsistencyAvg()));
             }
             i++;
         }

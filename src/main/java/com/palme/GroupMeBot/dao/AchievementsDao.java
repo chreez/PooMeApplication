@@ -23,11 +23,11 @@ public class AchievementsDao {
         }
 
         System.out.println(lastPoop + "asdasd");
-        if(lastPoop.getConsistency() == 7) {
+        if(Integer.valueOf(7).equals(lastPoop.getConsistency()) ) {
             return getNotCongratsTerm() + String.format("Maybe you should try more fibrez in your diet.");
         }
 
-        if(lastPoop.getConsistency() == 1) {
+        if(Integer.valueOf(1).equals(lastPoop.getConsistency())) {
             return getNotCongratsTerm() + String.format("Maybe you should try some laxatives.");
         }
 
