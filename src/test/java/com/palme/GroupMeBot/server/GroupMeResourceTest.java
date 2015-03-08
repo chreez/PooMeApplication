@@ -127,7 +127,7 @@ public class GroupMeResourceTest {
         IncomingGroupMeMessage message = new IncomingGroupMeMessage();
         message.setUser_id("17318362");
         message.setSender_type("user");
-        message.setName("chris");
+        message.setName("chris palmerz");
         message.setText("1" + POO_KEY_WORDS.get(1));
 
         final String entity = new ObjectMapper().writeValueAsString(message);

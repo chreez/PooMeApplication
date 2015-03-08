@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedSet;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.palme.GroupMeBot.dao.AchievementsDao;
@@ -79,8 +80,10 @@ public class PoopHandler {
         builder.append("Champions of the Poop\n----------------------------\nName - Count - Consistency\n");
         for(final PoopMetrics poopMetrics : allPoopMetrics) {
             System.out.println("LEADERBOARD: " + poopMetrics);
+            String userLogin = usersDao.getUserInfo(poopMetrics.getUserId()).getLogin();
+            userLogin = Iterables.getFirst(Splitter.on(" ").split(userLogin), userLogin);
             if(i<5) {
-                builder.append(String.format("%s - %d - %.01f%n", usersDao.getUserInfo(poopMetrics.getUserId()).getLogin(), poopMetrics.getPooCount(), poopMetrics.getConsistencyAvg()));
+                builder.append(String.format("%s - %d - %.01f%n", userLogin, poopMetrics.getPooCount(), poopMetrics.getConsistencyAvg()));
             }
             i++;
         }
