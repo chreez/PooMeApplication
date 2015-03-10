@@ -46,8 +46,10 @@ public class GroupMeClientImpl implements GroupMeClient{
 
     @Override
     public Response likeMessage(final IncomingGroupMeMessage message) {
+        System.out.println(message);
         final String path = String.format("/messages/%s/%s/like", message.getGroup_id(), message.getId());
         final Form form = new Form();
+        form.param("bot_id", botId);
         final Response response = target.path(path).request().post(Entity.form(form));
         System.out.println(response.toString());
         return response;
