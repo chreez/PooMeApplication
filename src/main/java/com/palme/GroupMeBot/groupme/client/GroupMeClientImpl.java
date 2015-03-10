@@ -11,6 +11,7 @@ import jersey.repackaged.com.google.common.collect.Iterables;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import com.palme.GroupMeBot.groupme.server.model.Attachment;
+import com.palme.GroupMeBot.groupme.server.model.IncomingGroupMeMessage;
 import com.palme.GroupMeBot.groupme.server.model.OutgoingGroupMeMessage;
 
 public class GroupMeClientImpl implements GroupMeClient{
@@ -42,6 +43,16 @@ public class GroupMeClientImpl implements GroupMeClient{
         System.out.println(response.toString());
         return response;
     }
+
+    @Override
+    public Response likeMessage(final IncomingGroupMeMessage message) {
+        final String path = String.format("/messages/%s/%s/like", message.getGroup_id(), message.getId());
+        final Form form = new Form();
+        final Response response = target.path(path).request().post(Entity.form(form));
+        System.out.println(response.toString());
+        return response;
+    }
+
 
     @Override
     public Response sendMessage(final String message) {

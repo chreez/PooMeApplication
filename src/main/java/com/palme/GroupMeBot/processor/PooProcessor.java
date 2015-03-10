@@ -15,6 +15,7 @@ import com.palme.GroupMeBot.dao.AchievementsDao;
 import com.palme.GroupMeBot.dao.PoopDao;
 import com.palme.GroupMeBot.dao.UsersDao;
 import com.palme.GroupMeBot.dao.model.PoopInfo;
+import com.palme.GroupMeBot.groupme.client.GroupMeClient;
 import com.palme.GroupMeBot.groupme.client.UserDetails;
 import com.palme.GroupMeBot.groupme.server.model.Attachment;
 import com.palme.GroupMeBot.groupme.server.model.AttachmentType;
@@ -28,10 +29,12 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
 
     final private static List<String> POO_KEY_WORDS  = ImmutableList.of("🍫", "💩");
     private final PoopHandler pooHandler;
+    private final GroupMeClient client;
 
-    public PooProcessor(final Connection jdbcConnection) throws SQLException {
+    public PooProcessor(final GroupMeClient client, final Connection jdbcConnection) throws SQLException {
         this.pooHandler = new PoopHandler(new PoopDao(jdbcConnection),
                 new AchievementsDao(), new UsersDao(jdbcConnection));
+        this.client = client;
     }
 
     @Override
@@ -87,6 +90,7 @@ public final class PooProcessor extends AbstractProcessor<PooMessage> {
     @Override
     public Map<String, OutgoingGroupMeMessage> consume(final PooMessage message) {
         final UserDetails userDetails = message.getUserInfoFromMessage();
+        client.likeMessage(message);
         try {
             if(message.isReportPooMetrics()) {
                 return getMessageToGroup(pooHandler.getUserStatus(userDetails));
